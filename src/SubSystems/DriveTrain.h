@@ -64,14 +64,14 @@ private:
 	Gyro gyro;
 	FireTracker tracker;
 	//TODO make sure they work
-	const int leftServPin = 32;
+	const int leftServPin = 14;
 	const int leftEncPinA = 17;
 	const int leftEncPinB = 16;
 	const int leftDirPin = 5;
 
 	const int rightServPin = 33;
-	const int rightEncPinA = 34;
-	const int rightEncPinB = 35;
+	const int rightEncPinA = 26;
+	const int rightEncPinB = 27;
 	const int rightDirPin = 25;
 
 	const int turningLeeway = 2;
@@ -82,16 +82,20 @@ private:
 	const double turningKP = .1;
 
 	//Left drive motor constants
-	const double leftKP = .1;
+	const double leftKP = .48;
 	const double leftKI = 0;
 	const double leftKD = 0;
 	//Right drive motor constants
-	const double rightKP = .1;
+	const double rightKP = .45;
 	const double rightKI = 0;
 	const double rightKD = 0;
 
 	//keeps track of whether a command is still executing
 	bool driving;
+
+	const int circumference = PI*3;
+
+	long long convertInchesToTicks(double inches);
 
 };
 

@@ -14,10 +14,12 @@ DistanceSensor::DistanceSensor() {
 
 void DistanceSensor::setUp(int p){
 	port = p;
+	pinMode(port,INPUT);
 }
 //TODO
 bool DistanceSensor::getThreshold(){
 	int readValue = analogRead(port);
+	Serial.println("ADC: " + String(readValue));
 	return readValue < distanceThreshold;
 }
 

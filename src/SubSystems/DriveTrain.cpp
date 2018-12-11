@@ -21,9 +21,9 @@ void DriveTrain::setup(){
 	pinMode(rightEncPinA, INPUT_PULLDOWN);
 	pinMode(rightEncPinA, INPUT_PULLDOWN);
 	leftMotor.attach(leftServPin, leftDirPin,leftEncPinA,leftEncPinB);
-	leftMotor.SetTunings(.1,0,0);
+	leftMotor.SetTunings(leftKP,leftKI,leftKD);
 	rightMotor.attach(rightServPin, rightDirPin,rightEncPinA, rightEncPinB);
-	rightMotor.SetTunings(1,0,0);
+	rightMotor.SetTunings(rightKP,rightKI,rightKD);
 }
 void DriveTrain::rotateAngle(int angle){
 	const int MAX_SPEED = 10;
@@ -41,28 +41,18 @@ void DriveTrain::rotateAngle(int angle){
 }
 
 void DriveTrain::drive(int leftSpeed, int rightSpeed){
-	//Set the proper direction for the motors
-	/*if(leftSpeed < 0){
-		digitalWrite(leftDirPin,LOW);
-	}else{
-		digitalWrite(leftDirPin, HIGH);
-	}
-	if(rightSpeed < 0){
-		digitalWrite(rightDirPin,LOW);
-	}else{
-		digitalWrite(rightDirPin, HIGH);
-	}
-
-	leftMotor.setSetpoint(abs(leftSpeed));
-	rightMotor.setSetpoint(abs(rightSpeed));*/
+	driving = true;
 	leftMotor.setSetpoint(leftSpeed);
 	rightMotor.setSetpoint(rightSpeed);
 }
 
 void DriveTrain::loop(){
-	Serial.printf("(%lld, %lld)\n", leftMotor.getPosition(), rightMotor.getPosition());
-	leftMotor.loop();
-	rightMotor.loop();
+	if(driving){
+		//Serial.printf("(%lld, %lld)\n", leftMotor.getPosition(), rightMotor.getPosition());
+		leftMotor.loop();
+		rightMotor.loop();
+	}
+	//tracker.loop();
 }
 
 void DriveTrain::rotateRobot(int speed){
@@ -74,6 +64,37 @@ void DriveTrain::rotateRobot(int speed){
 	}
 	drive(leftSpeed,rightSpeed);
 }
+
+void DriveTrain::lineUpFire(){
+
+}
+
+
+/**
+ * Convert inches to travel to the proper number of encoder ticks
+ * @param inches the number of inches to drive
+ */
+long long DriveTrain::convertInchesToTicks(double inches){
+	//3200 ticks per full rotation
+	int fullTicks = 4200;
+	//wheel diameter 3 in
+	Serial.println("TEST: " + String(circumference));
+	long long goal = fullTicks*(inches/circumference);
+	return goal;
+}
+
+
+void DriveTrain::driveDistance(double inches){
+	driving = true;
+	long long numTicks = convertInchesToTicks(inches);
+	Serial.printf("Fuck: %lf, %lld \n", inches, numTicks);
+	long long leftGoal = leftMotor.getPosition() + numTicks;
+	long long rightGoal = rightMotor.getPosition() + numTicks;
+	Serial.printf("(%lld,%lld)\n", leftGoal, rightGoal);
+	drive(-leftGoal, rightGoal);
+}
+
+
 
 DriveTrain::~DriveTrain() {
 	// TODO Auto-generated destructor stub
