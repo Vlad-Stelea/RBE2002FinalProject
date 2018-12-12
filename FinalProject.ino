@@ -43,8 +43,8 @@ void setup() {
 	lm = new LocomotionController();
 	cm = new CommandManager();
 	//d.drive(-10000, 10000);
-	//d.driveDistance(50);
-	d.rotateAngle(360);
+	d.driveDistance(20);
+	//d.rotateAngle(90);
 	//d.setOutputs(-5000,-5000);
 	//while(1);
 	//fd.setup(19, 18);

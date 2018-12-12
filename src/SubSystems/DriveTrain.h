@@ -59,6 +59,9 @@ public:
 
 	void setOutputs(int right, int left);
 
+	//Returns whether the robot is ready for another command to be passed in
+	bool readyForCommand();
+
 	virtual ~DriveTrain();
 private:
 	static void rotationCallback(DriveTrain *d);
@@ -104,6 +107,8 @@ private:
 	bool driving;
 	//Keep track if the robot is performing a turn
 	bool turning;
+	//Keeps track of whether the robot is ready for another command to be passed in
+	bool ready;
 	double turningGoal;
 	double turningThreshold = 5;
 

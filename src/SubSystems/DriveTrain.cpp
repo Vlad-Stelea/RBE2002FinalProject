@@ -36,18 +36,8 @@ long long DriveTrain::convertTurnAngleToTicks(double degrees){
 void DriveTrain::rotateAngle(double angle){
 	leftMotor.SetTunings(turningKP,turningKI,turningKD);
 	rightMotor.SetTunings(turningKP, turningKI, turningKD);
-	/*const int MAX_SPEED = 10;
-	//Create the goal angle that the robot should stop turning at
-	int headingDiff = gyro.getHeading()-angle;
-	while(abs(headingDiff) > turningLeeway){
-		if(headingDiff>0){
-			rotateRobot(-headingDiff*turningKP);
-		}else if(headingDiff<0){
-			rotateRobot(headingDiff*turningKP);
-		}
-		headingDiff = gyro.getHeading()-angle;
-	}*/
 	turning = true;
+	ready = false;
 		turningGoal = angle+gyro.getHeading();
 		if(turningGoal > 360){
 			turningGoal = 360-angle;
@@ -64,36 +54,29 @@ void DriveTrain::rotateAngle(double angle){
 		rightRot = -numRotations;
 	}
 	drive(leftRot, rightRot);
-	//gyro.addStopRotatingHandler(DriveTrain::rotationCallback, turningGoal);
-	//gyro.addStopRotatingHandler(()->{}, turningGoal);
-	/*Serial.println("GYRO: " + String(gyro.getHeading()));
-	turning = true;
-	turningGoal = angle+gyro.getHeading();
-	if(turningGoal > 360){
-		turningGoal = 360-angle;
-	}else if(turningGoal < 0){
-		turningGoal = 360+turningGoal;
-	}
-	Serial.println("GYRO: " + String(turningGoal));
-	//while(1);*/
 }
 
 void DriveTrain::drive(int leftSpeed, int rightSpeed){
 	driving = true;
+	ready = false;
 	//Serial.printf("(%d,%d)",leftSpeed, rightSpeed);
 	leftMotor.setSetpoint(leftSpeed);
 	rightMotor.setSetpoint(rightSpeed);
 }
 
 void DriveTrain::loop(){
-
 	if(driving){
 		//Serial.printf("(%lld, %lld)\n", leftMotor.getPosition(), rightMotor.getPosition());
 		leftMotor.loop();
 		rightMotor.loop();
 	}else if(turning){
 		if(gyro.stoppedRotating()){
-			rotationCallback(this);
+			//Stop the motors
+			leftMotor.setOutput(0);
+			rightMotor.setOutput(0);
+			//Set turning to false
+			turning = false;
+			ready = true;
 			return;
 		}
 
