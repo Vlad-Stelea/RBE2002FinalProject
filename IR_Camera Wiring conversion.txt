@@ -1,0 +1,5 @@
+IRCamera Wires:
+Red: RED : VCC
+Black: BLACK: GROUND
+White: Green : SCL
+Yellow: YELLOW : SDA

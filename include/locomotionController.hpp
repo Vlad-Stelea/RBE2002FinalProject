@@ -5,8 +5,8 @@
 #ifndef _LOCOMOTIONCONTROLLER_H_
 #define _LOCOMOTIONCONTROLLER_H_
 
-#define STEPPER_STEP_PIN 32
-#define STEPPER_DIR_PIN 33
+#define STEPPER_STEP_PIN 12
+#define STEPPER_DIR_PIN 4
 #define FAN1_CTL_PIN 18
 
 // Forward declarations

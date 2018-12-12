@@ -9,8 +9,8 @@
 #define SRC_SUBSYSTEMS_DRIVETRAIN_H_
 #include "../Components/HBridgeEncoderPIDMotor.h"
 #include "../Components/FireTracker.h"
-
 #include "../Components/Gyro.h"
+
 class DriveTrain {
 public:
 	struct currentLoc{
@@ -18,13 +18,13 @@ public:
 	};
 
 	DriveTrain();
-	void setup();
+	void setup(Gyro *g);
 	/**
 	 * Rotate the robot to a specified angle
 	 * @param degrees the number of degrees to rotate the robot
 	 * 		negative parameter means
 	 */
-	void rotateAngle(int degrees);
+	void rotateAngle(double degrees);
 	/**
 	 * Sets a goal to drive a specified distance
 	 * 	Keep calling loop to run it farther
@@ -55,16 +55,19 @@ public:
 	/**
 	 * Sends the robot back to home base
 	 */
-	void goETGoHome();
+	void ETGoHome();
+
+	void setOutputs(int right, int left);
 
 	virtual ~DriveTrain();
 private:
+	static void rotationCallback(DriveTrain *d);
 	HBridgeEncoderPIDMotor leftMotor;
 	HBridgeEncoderPIDMotor rightMotor;
 	Gyro gyro;
 	FireTracker tracker;
 	//TODO make sure they work
-	const int leftServPin = 14;
+	const int leftServPin = 19;
 	const int leftEncPinA = 17;
 	const int leftEncPinB = 16;
 	const int leftDirPin = 5;
@@ -79,7 +82,6 @@ private:
 	/**
 	 * PID CONSTANTS
 	 */
-	const double turningKP = .1;
 
 	//Left drive motor constants
 	const double leftKP = .48;
@@ -90,12 +92,39 @@ private:
 	const double rightKI = 0;
 	const double rightKD = 0;
 
+	const double turningKP = 1000;
+	const double turningKI = 700;
+	const double turningKD = 40;
+	const int minValue = 500;
+	/*const double turningKI = .01;
+	const double turningKD = .01;*/
+
+
 	//keeps track of whether a command is still executing
 	bool driving;
+	//Keep track if the robot is performing a turn
+	bool turning;
+	double turningGoal;
+	double turningThreshold = 5;
 
 	const int circumference = PI*3;
 
+	const double WHEEL_BASE_CIRCUMFERENCE = 9.5*PI;
+
 	long long convertInchesToTicks(double inches);
+
+	/**
+	 * Converts a degree value for the robot to turn to how many ticks the wheels need to turn
+	 * @param degrees the number of degrees that the robot should turn relative to where it is now
+	 */
+	long long convertTurnAngleToTicks(double degrees);
+
+	/**
+	 * Passed in to gyro to do after the robot stops turning
+	 * Compensates if the error is not withing a reasonable threshold
+	 * @param currentAngle the angle that the gyro has currently turned
+	 */
+	static void correctAngle(double currentAngle);
 
 };
 

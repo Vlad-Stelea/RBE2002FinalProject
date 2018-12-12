@@ -20,7 +20,19 @@ void FireTracker::init(std::function<void()> callback){
 bool FireTracker::loop(){
 	cam.requestPosition();
 	//get the x and y values read from the camera
-	return true;
+	if (cam.available()) {
+		int x = cam.readX(0);
+		int y = cam.readY(0);
+		Serial.printf("(%d,%d)\n", x, y);
+		if(x < 1023 && y < 1023){
+			//Serial.printf("(%d,%d)\n", x, y);
+			//foundFireCallback();
+			return true;
+		}
+	}else{
+		Serial.println("IR camera not working");
+	}
+	return false;
 }
 FireTracker::~FireTracker() {
 	// TODO Auto-generated destructor stub
