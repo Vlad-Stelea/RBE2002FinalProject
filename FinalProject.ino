@@ -11,6 +11,11 @@
 #include "src/Components/DistanceSensor.h"
 #include "src/SubSystems/FireDestroyer.h"
 
+#include "src/Queueing/Command.h"
+#include "src/Queueing/CommandQueue.h"
+#include "src/Queueing/DriveCommand.h"
+#include "src/Queueing/RotateCommand.h"
+
 const char* WIFI_SSID = "esp32";
 const char* WIFI_PASS = "robotics_is_fun_rbe2002";
 
@@ -29,6 +34,10 @@ DriveTrain d;
 DistanceSensor dSensor;
 //FireTracker ft;
 FireDestroyer fd;
+CommandQueue cq;
+
+Command *curCommand;
+
 void setup() {
 	// Add your initialization code here
 	delay(500);
@@ -43,11 +52,16 @@ void setup() {
 	lm = new LocomotionController();
 	cm = new CommandManager();
 	//d.drive(-10000, 10000);
-	d.driveDistance(20);
-	//d.rotateAngle(90);
+	//d.driveDistance(10);
+	//d.rotateAngle(-90);
+	cq.addToEnd(new RotateCommand(-90, &d));
+	//cq.addToEnd(new RotateCommand(-90, &d));
+	cq.addToEnd(new DriveCommand(10, &d));
+	curCommand = cq.pop();
+	curCommand->setUpCommand();
 	//d.setOutputs(-5000,-5000);
 	//while(1);
-	//fd.setup(19, 18);
+	//fd.setup(4, 18);
 	//fd.tiltToAngle(30);
 	/*d.driveDistance(3);
 	d.driveDistance(4);*/
@@ -57,6 +71,16 @@ void setup() {
 }
 
 void loop() {
+	if(curCommand->isDone()){
+		Command *newCom = cq.pop();
+		if(newCom == nullptr){
+			return;
+		}
+		curCommand = newCom;
+		curCommand->setUpCommand();
+		//delay(1);
+	}
+	curCommand->loop();
 	//Serial.read();
 	//Serial.println("LOOP");
 	// Check the mailbox
@@ -66,7 +90,8 @@ void loop() {
 	lm->update();
 	//dSensor.getThreshold();
 	//Serial.println("Speed: " + String(g.getSpeed()));*/
-	d.loop();
+	//d.loop();
+
 	//ft.loop();
 	//Serial.println("AHHHHHHH: " + String(g.getHeading()));
 }

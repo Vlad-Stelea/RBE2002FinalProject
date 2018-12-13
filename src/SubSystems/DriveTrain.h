@@ -10,11 +10,16 @@
 #include "../Components/HBridgeEncoderPIDMotor.h"
 #include "../Components/FireTracker.h"
 #include "../Components/Gyro.h"
+#include <list>
 
 class DriveTrain {
 public:
 	struct currentLoc{
 		int x, y;
+	};
+
+	struct encoderHolder{
+		long long left, right;
 	};
 
 	DriveTrain();
@@ -64,6 +69,7 @@ public:
 
 	virtual ~DriveTrain();
 private:
+	void resetEncs();
 	static void rotationCallback(DriveTrain *d);
 	HBridgeEncoderPIDMotor leftMotor;
 	HBridgeEncoderPIDMotor rightMotor;
@@ -104,13 +110,13 @@ private:
 
 
 	//keeps track of whether a command is still executing
-	bool driving;
+	bool driving = false;
 	//Keep track if the robot is performing a turn
-	bool turning;
+	bool turning = false;
 	//Keeps track of whether the robot is ready for another command to be passed in
 	bool ready;
 	double turningGoal;
-	double turningThreshold = 5;
+	double turningThreshold = 3;
 
 	const int circumference = PI*3;
 
@@ -130,6 +136,12 @@ private:
 	 * @param currentAngle the angle that the gyro has currently turned
 	 */
 	static void correctAngle(double currentAngle);
+
+	const static int numEncVals = 100;
+	struct encoderHolder prevEncVals[numEncVals];
+	bool allItemsSame(struct encoderHolder* encoderVals);
+	void addEncHolder(struct encoderHolder *prevVals, struct encoderHolder newValue);
+	int currentIdx = 0;
 
 };
 

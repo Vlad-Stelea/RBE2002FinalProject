@@ -43,7 +43,6 @@ double Gyro::getSpeed(){
 
 double Gyro::getAcceleration(){
 	double linAccel = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL)[1];
-	//Serial.println("Lin Acc " + String(linAccel));
 	return linAccel;
 }
 

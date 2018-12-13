@@ -34,6 +34,7 @@ long long DriveTrain::convertTurnAngleToTicks(double degrees){
 }
 
 void DriveTrain::rotateAngle(double angle){
+	resetEncs();
 	leftMotor.SetTunings(turningKP,turningKI,turningKD);
 	rightMotor.SetTunings(turningKP, turningKI, turningKD);
 	turning = true;
@@ -57,7 +58,6 @@ void DriveTrain::rotateAngle(double angle){
 }
 
 void DriveTrain::drive(int leftSpeed, int rightSpeed){
-	driving = true;
 	ready = false;
 	//Serial.printf("(%d,%d)",leftSpeed, rightSpeed);
 	leftMotor.setSetpoint(leftSpeed);
@@ -66,11 +66,19 @@ void DriveTrain::drive(int leftSpeed, int rightSpeed){
 
 void DriveTrain::loop(){
 	if(driving){
-		//Serial.printf("(%lld, %lld)\n", leftMotor.getPosition(), rightMotor.getPosition());
+		Serial.printf("(%lld, %lld)\n", leftMotor.getPosition(), rightMotor.getPosition());
 		leftMotor.loop();
 		rightMotor.loop();
+		//The motors have not been moving
+		/*if(allItemsSame(prevEncVals)){
+			leftMotor.setOutput(0);
+			rightMotor.setOutput(0);
+			driving = false;
+			//ready = true;
+			return;
+		}*/
 	}else if(turning){
-		if(gyro.stoppedRotating()){
+		if(abs(gyro.getHeading()-turningGoal) < turningThreshold){
 			//Stop the motors
 			leftMotor.setOutput(0);
 			rightMotor.setOutput(0);
@@ -134,6 +142,7 @@ long long DriveTrain::convertInchesToTicks(double inches){
 
 
 void DriveTrain::driveDistance(double inches){
+	resetEncs();
 	leftMotor.SetTunings(leftKP,leftKI, leftKD);
 	rightMotor.SetTunings(rightKP, rightKI, rightKD);
 	driving = true;
@@ -150,6 +159,35 @@ void DriveTrain::rotationCallback(DriveTrain * dTrain){
 	//Set turning to false
 	dTrain->turning = false;
 
+}
+
+bool DriveTrain::allItemsSame(struct encoderHolder *prevVals){
+	for(int i = 1; i < numEncVals; i++){
+		struct encoderHolder prev = prevVals[i-1];
+		struct encoderHolder cur = prevVals[i];
+		if(prev.left != cur.left || prev.right != cur.right){
+			return false;
+		}
+	}
+	return true;
+}
+
+void DriveTrain::addEncHolder(struct encoderHolder *prevVals, struct encoderHolder newVal){
+	currentIdx +=1;
+	if(currentIdx > numEncVals){
+		currentIdx = 0;
+	}
+	prevVals[currentIdx] = newVal;
+
+}
+
+void DriveTrain::resetEncs(){
+	leftMotor.overrideCurrentPosition(0);
+	rightMotor.overrideCurrentPosition(0);
+}
+
+bool DriveTrain::readyForCommand(){
+	return ready;
 }
 
 DriveTrain::~DriveTrain() {
