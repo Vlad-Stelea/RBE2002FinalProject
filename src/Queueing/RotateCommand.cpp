@@ -15,7 +15,11 @@ RotateCommand::RotateCommand(double a, DriveTrain *dt) {
 }
 
 bool RotateCommand::isDone(){
-	return dTrain->readyForCommand();
+	bool done = dTrain->readyForCommand();
+	if(done){
+		delay(2000);
+	}
+	return done;
 }
 
 void RotateCommand::setUpCommand(){

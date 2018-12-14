@@ -15,6 +15,7 @@
 #include "src/Queueing/CommandQueue.h"
 #include "src/Queueing/DriveCommand.h"
 #include "src/Queueing/RotateCommand.h"
+#include "src/Queueing/EndCommand.h"
 
 const char* WIFI_SSID = "esp32";
 const char* WIFI_PASS = "robotics_is_fun_rbe2002";
@@ -54,14 +55,18 @@ void setup() {
 	//d.drive(-10000, 10000);
 	//d.driveDistance(10);
 	//d.rotateAngle(-90);
-	cq.addToEnd(new RotateCommand(-90, &d));
+	//cq.addToEnd(new RotateCommand(-90, &d));
 	//cq.addToEnd(new RotateCommand(-90, &d));
 	cq.addToEnd(new DriveCommand(10, &d));
+	cq.addToEnd(new RotateCommand(-60, &d));
+	cq.addToEnd(new DriveCommand(10, &d));
+	cq.addToEnd(new EndCommand());
 	curCommand = cq.pop();
 	curCommand->setUpCommand();
 	//d.setOutputs(-5000,-5000);
 	//while(1);
 	//fd.setup(4, 18);
+	//fd.turnOnFan();
 	//fd.tiltToAngle(30);
 	/*d.driveDistance(3);
 	d.driveDistance(4);*/
@@ -72,6 +77,7 @@ void setup() {
 
 void loop() {
 	if(curCommand->isDone()){
+		//Serial.println("POPPY");
 		Command *newCom = cq.pop();
 		if(newCom == nullptr){
 			return;

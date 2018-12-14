@@ -101,9 +101,9 @@ private:
 	const double rightKI = 0;
 	const double rightKD = 0;
 
-	const double turningKP = 1000;
-	const double turningKI = 700;
-	const double turningKD = 40;
+	const double turningKP = 100;
+	const double turningKI = 0;
+	const double turningKD = 0;
 	const int minValue = 500;
 	/*const double turningKI = .01;
 	const double turningKD = .01;*/
@@ -116,7 +116,9 @@ private:
 	//Keeps track of whether the robot is ready for another command to be passed in
 	bool ready;
 	double turningGoal;
-	double turningThreshold = 3;
+	double turningThreshold = 2;
+
+	long long drivingThreshold = 1000;
 
 	const int circumference = PI*3;
 

@@ -14,7 +14,11 @@ DriveCommand::DriveCommand(double inches, DriveTrain* driveTrain) {
 }
 
 bool DriveCommand::isDone(){
-	return false;
+	bool done = dTrain->readyForCommand();
+	if(done){
+		delay(2000);
+	}
+	return dTrain->readyForCommand();
 }
 
 void DriveCommand::loop(){
@@ -22,7 +26,6 @@ void DriveCommand::loop(){
 }
 
 void DriveCommand::setUpCommand(){
-	Serial.println("Driving: " + String(numInches));
 	dTrain->driveDistance(numInches);
 }
 

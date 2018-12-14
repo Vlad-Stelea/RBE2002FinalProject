@@ -30,7 +30,7 @@ void DriveTrain::setup(Gyro *g){
 long long DriveTrain::convertTurnAngleToTicks(double degrees){
 	double arcDegree = degrees/360;
 	double arcLength = arcDegree*WHEEL_BASE_CIRCUMFERENCE;
-	return 4000*(arcLength/circumference);
+	return 1000*(arcLength/circumference);
 }
 
 void DriveTrain::rotateAngle(double angle){
@@ -66,7 +66,17 @@ void DriveTrain::drive(int leftSpeed, int rightSpeed){
 
 void DriveTrain::loop(){
 	if(driving){
-		Serial.printf("(%lld, %lld)\n", leftMotor.getPosition(), rightMotor.getPosition());
+		Serial.println();
+		int leftDiff = abs(leftMotor.getPosition() - leftMotor.getSetPoint());
+		int rightDiff = abs(rightMotor.getPosition() - rightMotor.getSetPoint());
+		if(leftDiff < drivingThreshold && rightDiff < drivingThreshold){
+			driving = false;
+			ready = true;
+			leftMotor.setOutput(0);
+			rightMotor.setOutput(0);
+			return;
+		}
+		Serial.printf("(%lld, %lld), Wanted(%lf,%lf)\n", leftMotor.getPosition(), rightMotor.getPosition(), leftMotor.getSetPoint(), rightMotor.getSetPoint());
 		leftMotor.loop();
 		rightMotor.loop();
 		//The motors have not been moving
@@ -78,6 +88,7 @@ void DriveTrain::loop(){
 			return;
 		}*/
 	}else if(turning){
+		Serial.printf("Goal: %lf, current: %lf\n", turningGoal, gyro.getHeading());
 		if(abs(gyro.getHeading()-turningGoal) < turningThreshold){
 			//Stop the motors
 			leftMotor.setOutput(0);
@@ -104,7 +115,6 @@ void DriveTrain::loop(){
 		}
 		setOutputs(output,output);
 	}
-	//tracker.loop();
 }
 
 void DriveTrain::setOutputs(int left, int right){

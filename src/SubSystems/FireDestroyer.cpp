@@ -22,6 +22,10 @@ void FireDestroyer::tiltToAngle(int degrees){
 	tilter.read();
 }
 
+void FireDestroyer::turnOnFan(){
+	fan.turnOn();
+}
+
 FireDestroyer::~FireDestroyer() {
 	// TODO Auto-generated destructor stub
 }

@@ -16,6 +16,7 @@ public:
 	FireDestroyer();
 	void setup(int servoPort, int fanPort);
 	void tiltToAngle(int angle);
+	void turnOnFan();
 	virtual ~FireDestroyer();
 
 private:
