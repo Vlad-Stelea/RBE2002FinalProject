@@ -116,7 +116,7 @@ private:
 	//Keeps track of whether the robot is ready for another command to be passed in
 	bool ready;
 	double turningGoal;
-	double turningThreshold = 2;
+	double turningThreshold = 3;
 
 	long long drivingThreshold = 1000;
 

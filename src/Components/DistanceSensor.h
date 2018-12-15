@@ -23,7 +23,7 @@ private:
 	//The port that the sensor is plugged into
 	int port;
 	//The value that the sensor reads if there is an object nearby for
-	const int distanceThreshold = 0;
+	const int distanceThreshold = 500;
 };
 
 #endif /* SRC_COMPONENTS_DISTANCESENSOR_H_ */

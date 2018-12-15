@@ -32,7 +32,7 @@ void Stepper::step() {
 		digitalWrite(this->step_pin, LOW);
 		delay(8);
 		// Beep boop
-		Serial.printf("Current: %i Target: %i\n", this->current_step, this->target_step);
+		//Serial.printf("Current: %i Target: %i\n", this->current_step, this->target_step);
 	}
 }
 

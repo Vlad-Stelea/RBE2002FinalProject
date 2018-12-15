@@ -7,9 +7,8 @@
 
 #include "FireDestroyer.h"
 
-FireDestroyer::FireDestroyer() {
+FireDestroyer::FireDestroyer() : stepper(12,2) {
 	// TODO Auto-generated constructor stub
-
 }
 
 void FireDestroyer::setup(int servoPort, int fanPort){

@@ -17,6 +17,7 @@ RotateCommand::RotateCommand(double a, DriveTrain *dt) {
 bool RotateCommand::isDone(){
 	bool done = dTrain->readyForCommand();
 	if(done){
+		Serial.println("Rotation complete!");
 		delay(2000);
 	}
 	return done;

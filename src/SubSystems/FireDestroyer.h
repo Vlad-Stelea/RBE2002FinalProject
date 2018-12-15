@@ -10,6 +10,7 @@
 #define SRC_SUBSYSTEMS_FIREDESTROYER_H_
 #include "../Components/Fan.h"
 #include <ESP32Servo.h>
+#include "stepper.hpp"
 
 class FireDestroyer {
 public:
@@ -19,9 +20,10 @@ public:
 	void turnOnFan();
 	virtual ~FireDestroyer();
 
-private:
+public:
 	Fan fan;
 	Servo tilter;
+	Stepper stepper;
 
 };
 

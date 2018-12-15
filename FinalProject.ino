@@ -15,6 +15,7 @@
 #include "src/Queueing/CommandQueue.h"
 #include "src/Queueing/DriveCommand.h"
 #include "src/Queueing/RotateCommand.h"
+#include "src/Queueing/BlowFireCommand.h"
 #include "src/Queueing/EndCommand.h"
 
 const char* WIFI_SSID = "esp32";
@@ -33,10 +34,10 @@ LocomotionController* lm;
 //Gyro g;
 DriveTrain d;
 DistanceSensor dSensor;
-//FireTracker ft;
+FireTracker ft;
 FireDestroyer fd;
 CommandQueue cq;
-
+DistanceSensor leftSens;
 Command *curCommand;
 
 void setup() {
@@ -49,7 +50,7 @@ void setup() {
 	d.setup(&g);
 	WiFi.softAPConfig(WIFI_ADDR, WIFI_GATE, WIFI_SUBN);
 	WiFi.softAP(WIFI_SSID, WIFI_PASS, 3, false, 4);
-	dSensor.setUp(32);
+	leftSens.setUp(32);
 	lm = new LocomotionController();
 	cm = new CommandManager();
 	//d.drive(-10000, 10000);
@@ -57,17 +58,27 @@ void setup() {
 	//d.rotateAngle(-90);
 	//cq.addToEnd(new RotateCommand(-90, &d));
 	//cq.addToEnd(new RotateCommand(-90, &d));
-	cq.addToEnd(new DriveCommand(10, &d));
+	//cq.addToEnd(new DriveCommand(10, &d));
+	//cq.addToEnd(new RotateCommand(-60, &d));
+	//cq.addToEnd(new DriveCommand(10, &d));
+	fd.setup(4, 18);
+	/*fd.tiltToAngle(115);
+	fd.turnOnFan();
+	delay(1000000);*/
+	//fd.turnOnFan();
+	cq.addToEnd(new DriveCommand(77, &d));
 	cq.addToEnd(new RotateCommand(-60, &d));
-	cq.addToEnd(new DriveCommand(10, &d));
+	cq.addToEnd(new DriveCommand(20, &d));
+	cq.addToEnd(new RotateCommand(-60,&d));
+	//cq.addToEnd(new DriveCommand(5,&d));
+	cq.addToEnd(new BlowFireCommand(&fd, &ft));
 	cq.addToEnd(new EndCommand());
 	curCommand = cq.pop();
 	curCommand->setUpCommand();
 	//d.setOutputs(-5000,-5000);
-	//while(1);
-	//fd.setup(4, 18);
+	//while(1);*/
 	//fd.turnOnFan();
-	//fd.tiltToAngle(30);
+	//fd.tiltToAngle(40);
 	/*d.driveDistance(3);
 	d.driveDistance(4);*/
 	/*while(1)
@@ -87,6 +98,23 @@ void loop() {
 		//delay(1);
 	}
 	curCommand->loop();
+	if(leftSens.getThreshold()){
+		//Add search of building to front of queue
+		cq.addToFront(new DriveCommand(10,&d));
+		cq.addToFront(new RotateCommand(-90,&d));
+		cq.addToFront(new BlowFireCommand(fd, ft));
+		cq.addToFront(new DriveCommand(10,&d));
+		cq.addToFront(new RotateCommand(-90,&d));
+		cq.addToFront(new DriveCommand(10,&d));
+		cq.addToFront(new BlowFireCommand(fd, ft));
+		cq.addToFront(new DriveCommand(10,&d));
+		cq.addToFront(new RotateCommand(-90,&d));
+		cq.addToFront(new DriveCommand(10,&d));
+		cq.addToFront(new BlowFireCommand(fd, ft));
+		cq.addToFront(new DriveCommand(10,&d));
+		cq.addToFront(new RotateCommand(-90,&d));
+		cq.addToFront(new DriveCommand(30,&d));
+	}
 	//Serial.read();
 	//Serial.println("LOOP");
 	// Check the mailbox
@@ -97,7 +125,7 @@ void loop() {
 	//dSensor.getThreshold();
 	//Serial.println("Speed: " + String(g.getSpeed()));*/
 	//d.loop();
-
+	//ft.loop();
 	//ft.loop();
 	//Serial.println("AHHHHHHH: " + String(g.getHeading()));
 }

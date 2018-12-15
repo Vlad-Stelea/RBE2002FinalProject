@@ -34,6 +34,21 @@ bool FireTracker::loop(){
 	}
 	return false;
 }
+
+FireTracker::FireLoc FireTracker::getFireCoords(){
+	cam.requestPosition();
+	struct FireLoc toReturn;
+	while(!cam.available()) {
+		//delay(100);
+		cam.requestPosition();
+		Serial.println("Waiting for fire coordinates");
+		delay(100);
+	}
+	toReturn.x = cam.readX(0);
+	toReturn.y = cam.readY(0);
+	return toReturn;
+}
+
 FireTracker::~FireTracker() {
 	// TODO Auto-generated destructor stub
 }

@@ -12,8 +12,12 @@
 
 class FireTracker {
 public:
+	struct FireLoc{
+		int x, y;
+	};
 	FireTracker();
 	bool loop();
+	FireLoc getFireCoords();
 	void init(std::function<void()> callback);
 	virtual ~FireTracker();
 private:
