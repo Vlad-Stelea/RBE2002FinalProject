@@ -102,15 +102,15 @@ void loop() {
 		//Add search of building to front of queue
 		cq.addToFront(new DriveCommand(10,&d));
 		cq.addToFront(new RotateCommand(-90,&d));
-		cq.addToFront(new BlowFireCommand(fd, ft));
+		cq.addToFront(new BlowFireCommand(&fd, &ft));
 		cq.addToFront(new DriveCommand(10,&d));
 		cq.addToFront(new RotateCommand(-90,&d));
 		cq.addToFront(new DriveCommand(10,&d));
-		cq.addToFront(new BlowFireCommand(fd, ft));
+		cq.addToFront(new BlowFireCommand(&fd, &ft));
 		cq.addToFront(new DriveCommand(10,&d));
 		cq.addToFront(new RotateCommand(-90,&d));
 		cq.addToFront(new DriveCommand(10,&d));
-		cq.addToFront(new BlowFireCommand(fd, ft));
+		cq.addToFront(new BlowFireCommand(&fd, &ft));
 		cq.addToFront(new DriveCommand(10,&d));
 		cq.addToFront(new RotateCommand(-90,&d));
 		cq.addToFront(new DriveCommand(30,&d));
